@@ -1,0 +1,19 @@
+---
+- name: Add port rule to AWS Security Group
+  hosts: localhost
+  connection: local
+  gather_facts: false
+
+  tasks:
+    - name: Open TCP port 8081 in aws-test-sg
+      amazon.aws.ec2_security_group:
+        name: "{{ sg_name | default('aws-test-sg') }}"
+        description: "APD Security Group"
+        region: "{{ aws_region | default('us-east-1') }}"
+        purge_rules: false
+        rules:
+          - proto: tcp
+            ports:
+              - "{{ target_port | default(8081) }}"
+            cidr_ip: 0.0.0.0/0
+            rule_desc: "Allow Webserver port via Ansible"
